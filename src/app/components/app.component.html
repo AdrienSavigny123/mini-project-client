@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2">
+          <img src="../assets/logo.PNG" class="img-fluid float-left p-2" alt="Responsive image"
+               width="100%">
+        </div>
+        <div class="col-md-8" style="text-align:center">
+          <h3 class="mt-4 display-4 text-white">Welcome to {{ title }} !</h3>
+          <form>
+                <input type="Username" class="form-control" id="username" placeholder="Username">
+            </form>
+        </div>
+      </div>
+      <div class="row">
+        <nav class="col-sm-2">
+          Menu
+        </nav>
+        <section class="col-sm-10">
+          <div class="row">
+            <div class="col-sm-10">
+              <div class="row">
+                <article class="col-sm-6">
+                  <app-product [prod]="world.products.product[0]" 
+                  class="product col-md-6"> </app-product>
+                </article>
+                <article class="col-sm-6">
+                  <app-product [prod]="world.products.product[0]" 
+                  class="product col-md-6"> </app-product>
+                </article>
+                <article class="col-sm-6">
+                  <app-product [prod]="world.products.product[0]" 
+                  class="product col-md-6"> </app-product>
+                </article>
+                <article class="col-sm-6">
+                  <app-product [prod]="world.products.product[0]" 
+                  class="product col-md-6"> </app-product>
+                </article>
+                <article class="col-sm-6">
+                  <app-product [prod]="world.products.product[0]" 
+                  class="product col-md-6"> </app-product>
+                </article>
+                <article class="col-sm-6">
+                  <app-product [prod]="world.products.product[0]" 
+                  class="product col-md-6"> </app-product>
+                </article>
+              </div>
+            </div>
+            <div class="col-sm-2">
+              <div class="row">
+                <aside class="col-sm-12">
+                  <h2 class="mt-3 text-secondary p-1 mr-3 offset-sm-6">  <!-- <span [innerHTML]="world.money | bigvalue"></span> --> Money €</h2>
+                 
+                </aside>
+                <aside class="col-sm-12">
+                  Aside 2
+                </aside>
+              </div>
+            </div>
+          </div>
+        </section>
+       
+    </div>
+    </div>
+  </body>
+</html>

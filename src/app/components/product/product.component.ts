@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, EventEmitter, Output } from '@angular/core';
 import { World,Product } from 'src/app/resources/world';
 
 
@@ -12,11 +12,14 @@ const ProgressBar= require("progressbar.js");
 
 export class ProductComponent implements OnInit {
   
-  progressbar: any;
+
 
   @ViewChild('bar') progressBarItem;
+  progressbar: any;
   world: World;
   product: Product;
+  lastupdate: number;
+  rateProd: string;
   constructor() { }
 
   ngOnInit(): void {
@@ -29,7 +32,7 @@ export class ProductComponent implements OnInit {
       trailWidth: 1,
       svgStyle: {width: '100%', height: '100%'}
     });
-    
+    setInterval(() =>{ this.calcScore(); }, 100);
     bar.animate(1.0);  // Number from 0.0 to 1.0
   }
 
@@ -37,6 +40,8 @@ export class ProductComponent implements OnInit {
 set prod( value: Product) {
   this.product= value;
 }
+@Output()
+notifyProduction: EventEmitter<Product> = new EventEmitter<Product>();
 
 startFabrication() {
   this.progressbar.set(0);
@@ -74,5 +79,35 @@ countdown(id: number, speed: number) {
       document.getElementById('temps' + id).innerHTML = hours + ':' + minutes + ':' + time;
     }
   }, 0);
+}
+
+calcScore(): void {
+  const now = Date.now();
+  const elapseTime = now - this.lastupdate;
+  this.lastupdate = now;
+
+  if (this.product.managerUnlocked) {
+    if (this.product.timeleft !== 0) {
+      this.product.timeleft = this.product.timeleft - elapseTime;
+      if (this.product.timeleft <= 0) {
+        this.product.timeleft = this.product.vitesse;
+        this.notifyProduction.emit(this.product);
+        this.startFabrication();
+      }
+    } else {
+      this.startFabrication();
+    }
+
+  } else {
+
+    if (this.product.timeleft !== 0) {
+      this.product.timeleft = this.product.timeleft - elapseTime;
+      if (this.product.timeleft <= 0) {
+        this.product.timeleft = 0;
+        this.progressbar.set(0);
+        this.notifyProduction.emit(this.product);
+      }
+    }
+  }
 }
 }

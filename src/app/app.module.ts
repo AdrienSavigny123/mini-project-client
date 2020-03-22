@@ -7,17 +7,24 @@ import { ProductComponent } from './components/product/product.component';
 import { RestserviceService } from './services/restservice.service';
 import { FormsModule } from '@angular/forms';
 import { BigvaluePipe } from './bigvalue.pipe';
+import { ModalComponent } from './components/modal/modal.component';
+import{ ToasterModule} from'angular2-toaster';
+
 
 
 @NgModule({
   declarations: [
     AppComponent,
     ProductComponent,
-    BigvaluePipe
+    BigvaluePipe,
+    ModalComponent
   ],
   imports: [
     BrowserModule,
-    HttpClientModule
+    FormsModule,
+    HttpClientModule,
+    ToasterModule
+
 
   ],
   providers: [RestserviceService],

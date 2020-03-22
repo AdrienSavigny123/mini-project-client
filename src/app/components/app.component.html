@@ -19,15 +19,23 @@
       </div>
       <div class="row">
         <nav class="col-sm-2">
-          Menu
+          <div class="buttons offset-md-1 float-left">
+            <div class="buttonleft btn bts btn-md mr-2" id="btnManagers" data-toggle="modal"
+              (click)="managersModal.show()" style="cursor:pointer">
+              Managers</div>
+
+          </div>
         </nav>
         <section class="col-sm-10">
           <div class="row">
             <div class="col-sm-10">
               <div class="row">
                 <article class="col-sm-6">
-                  <app-product [prod]="world.products.product[0]" 
-                  class="product col-md-6"> </app-product>
+                  <app-product [prod]="world.products.product[0]" [rate]="rate" (notifyProduction)="onProductionDone($event)" 
+                   [money]="world.money" (notifyBuy)="onProductBuy($event)"
+                  class="product col-md-6">
+                  <toaster-container></toaster-container> </app-product>
+                  <toaster-container></toaster-container>
                 </article>
                 <article class="col-sm-6">
                   <app-product [prod]="world.products.product[0]" 
@@ -51,15 +59,16 @@
                 </article>
               </div>
             </div>
+            
             <div class="col-sm-2">
               <div class="row">
                 <aside class="col-sm-12">
                   <h2 class="mt-3 text-secondary p-1 mr-3 offset-sm-6">  
-                     <span [innerHTML]="world.money | bigvalue"></span>  Money €</h2>
+                     <span [innerHTML]="world.money | bigvalue"></span>  {{world.money | bigvalue}} € €</h2>
                  
                 </aside>
                 <aside class="col-sm-12">
-                  Aside 2
+                  <button id="buyBtn" class="btn buy float-right mr-3" (click)="buyRate()">Buy x {{ rate }}</button>
                 </aside>
               </div>
             </div>
@@ -68,5 +77,32 @@
        
     </div>
     </div>
+
+    <app-modal #managersModal>
+      <div class="app-modal-header mt-3">
+        <h4 class="modal-title">Les Managers  !</h4>
+      </div>
+      <div class="app-modal-body">
+        <div *ngFor="let manager of world.managers.pallier">
+          <div *ngIf="manager.unlocked == false">
+            <div>
+              <!--<img attr.src="http://localhost:8080/{{manager.logo}}" class="round" /> -->
+              <div class="dib" *ngFor="let product of world.products.product">
+                <div class="dib" *ngIf="manager.idcible == product.id"><label>{{product.name}}</label></div>
+              </div>
+              <div class="dib right">
+                <label class="mr">{{manager.seuil}}€</label>
+                <button class="btn btn-dark" [disabled]="world.money < manager.seuil"
+                  (click)="buyManager(manager.seuil, manager.idcible)">HIRE !</button>
+              </div>
+              <label>{{manager.name}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="app-modal-footer">
+        <button type="button" class="btn btn-dark" (click)="managersModal.hide()">Fermer</button>
+      </div>
+    </app-modal>
   </body>
 </html>

@@ -4,105 +4,77 @@
 
   </head>
   <body>
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-md-2">
-          <img src="../assets/logo.PNG" class="img-fluid float-left p-2" alt="Responsive image"
+          <img src='http://localhost:8080/isis/piment.jpg' class="img-responsive"
                width="100%">
         </div>
+
+        
         <div class="col-md-8" style="text-align:center">
           <h3 class="mt-4 display-4 text-white">Welcome to {{ title }} !</h3>
           <form>
                 <input type="Username" class="form-control" id="username" placeholder="Username">
             </form>
         </div>
-      </div>
-      <div class="row">
-        <nav class="col-sm-2">
-          <div class="buttons offset-md-1 float-left">
-            <div class="buttonleft btn bts btn-md mr-2" id="btnManagers" data-toggle="modal"
-              (click)="managersModal.show()" style="cursor:pointer">
-              Managers</div>
 
-          </div>
-        </nav>
-        <section class="col-sm-10">
-          <div class="row">
-            <div class="col-sm-10">
-              <div class="row">
-                <article class="col-sm-6">
-                  <app-product [prod]="world.products.product[0]" [rate]="rate" (notifyProduction)="onProductionDone($event)" 
-                   [money]="world.money" (notifyBuy)="onProductBuy($event)"
-                  class="product col-md-6">
-                  <toaster-container></toaster-container> </app-product>
-                  <toaster-container></toaster-container>
-                </article>
-                <article class="col-sm-6">
-                  <app-product [prod]="world.products.product[0]" 
-                  class="product col-md-6"> </app-product>
-                </article>
-                <article class="col-sm-6">
-                  <app-product [prod]="world.products.product[0]" 
-                  class="product col-md-6"> </app-product>
-                </article>
-                <article class="col-sm-6">
-                  <app-product [prod]="world.products.product[0]" 
-                  class="product col-md-6"> </app-product>
-                </article>
-                <article class="col-sm-6">
-                  <app-product [prod]="world.products.product[0]" 
-                  class="product col-md-6"> </app-product>
-                </article>
-                <article class="col-sm-6">
-                  <app-product [prod]="world.products.product[0]" 
-                  class="product col-md-6"> </app-product>
-                </article>
-              </div>
-            </div>
-            
-            <div class="col-sm-2">
-              <div class="row">
-                <aside class="col-sm-12">
-                  <h2 class="mt-3 text-secondary p-1 mr-3 offset-sm-6">  
-                     <span [innerHTML]="world.money | bigvalue"></span>  {{world.money | bigvalue}} € €</h2>
-                 
-                </aside>
-                <aside class="col-sm-12">
-                  <button id="buyBtn" class="btn buy float-right mr-3" (click)="buyRate()">Buy x {{ rate }}</button>
-                </aside>
-              </div>
-            </div>
-          </div>
-        </section>
-       
-    </div>
-    </div>
-
-    <app-modal #managersModal>
-      <div class="app-modal-header mt-3">
-        <h4 class="modal-title">Les Managers  !</h4>
-      </div>
-      <div class="app-modal-body">
-        <div *ngFor="let manager of world.managers.pallier">
-          <div *ngIf="manager.unlocked == false">
-            <div>
-              <!--<img attr.src="http://localhost:8080/{{manager.logo}}" class="round" /> -->
-              <div class="dib" *ngFor="let product of world.products.product">
-                <div class="dib" *ngIf="manager.idcible == product.id"><label>{{product.name}}</label></div>
-              </div>
-              <div class="dib right">
-                <label class="mr">{{manager.seuil}}€</label>
-                <button class="btn btn-dark" [disabled]="world.money < manager.seuil"
-                  (click)="buyManager(manager.seuil, manager.idcible)">HIRE !</button>
-              </div>
-              <label>{{manager.name}}</label>
-            </div>
+        <div class="row">
+          <div class="col-md-2">
+            <h4 class="texthaut">Argent : </h4> <span [innerHTML]="world.money | bigvalue">  {{world.money | bigvalue}} € € </span>
+            <p> <button type="button" class="button btn-warning btn-lg pull-right" (click)="buyRate()">Buy {{qtmulti}}</button> </p>
           </div>
         </div>
+
       </div>
-      <div class="app-modal-footer">
-        <button type="button" class="btn btn-dark" (click)="managersModal.hide()">Fermer</button>
-      </div>
-    </app-modal>
+    <!--<div class="row">
+        <div class="col-md-2">
+            <p><button type="button" class="btn btn-primary btn-lg" data-toggle="modal" (click)="managersModal.show()">Managers</button></p><br>
+        </div> -->
+           <div class="row">
+            <div class="col-md-2">
+              <p><button type="button" class="btn btn-primary btn-lg" data-toggle="modal" (click)="managersModal.show()">Managers</button></p><br>
+          </div>
+            <div class="col-md-10">
+              <p>
+                  <app-product *ngFor="let product of world.products.product" (notifyProduction)="onProductionDone($event)"
+                   (notifyBuying)="onBuyDone($event)" (notifyUnlocked)="productUnlockDone($event)" 
+                   [prod]="product" 
+                   [money]="world.money" [qtmulti]="qtmulti" class="product col-md-6">
+                  </app-product>
+  
+              </p>
+          </div>
+
+          </div>
+        <app-modal #managersModal>
+          <div class="app-modal-header">
+              <h4 class="modal-title text-center" style="font-size:x-large;">Managers make you feel better !</h4>
+          </div>
+          <div class="app-modal-body" style="padding-right: 10px;">
+              <div *ngFor="let manager of world.managers.pallier">
+                  <div *ngIf="!manager.unlocked" class="row rounded notif border-bottom">
+                      <div class="col-md-5">
+                          <img class="img-responsive" [src]="'http://localhost:8080/'+manager.logo" style="cursor:pointer" />
+                      </div>
+                      <div class="col-md-7">
+                          <div class="row">
+                              <button class="btn btn-info pull-right" style="height: 100px; width: 100px;" (click)="achatManager(manager)" [disabled]="world.money < manager.seuil">Hire!</button>
+                              <span class="txt2 row text-center font-weight-bold" style="font-size:x-large; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">{{manager.name}}
+                                  <br><span style="font-family: 'ROG Fonts'; font-size: small; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">Price : {{manager.seuil}} </span>
+                              </span>
+                          </div>
+  
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="app-modal-footer"> <button type="button" class="btn btn-default" (click)="managersModal.hide()">Close</button> </div>
+      </app-modal>
+          </div>  
+       
+  
+
+  
   </body>
 </html>

@@ -8,7 +8,8 @@ import { RestserviceService } from './services/restservice.service';
 import { FormsModule } from '@angular/forms';
 import { BigvaluePipe } from './bigvalue.pipe';
 import { ModalComponent } from './components/modal/modal.component';
-import{ ToasterModule} from'angular2-toaster';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -23,7 +24,8 @@ import{ ToasterModule} from'angular2-toaster';
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    ToasterModule
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
 
 
   ],

@@ -11,23 +11,17 @@ const ProgressBar = require("progressbar.js");
 })
 
 export class ProductComponent implements OnInit {
-  @ViewChild('bar') progressBarItem;
+  @ViewChild('bar') progressBarItem: { nativeElement: any; };
   progressbar: any;
-  world: World;
   product: Product;
   lastupdate: number;
   rateProd: string;
   _money: number;
-  revenu: number;
-  currentcout: number;
-  _rate: string;
   isRun: boolean;
 
-  temps: any;
 @Output()
 notifyProduction: EventEmitter<Product> = new EventEmitter<Product>();
 @Output()
-notifyBuy: EventEmitter<number> = new EventEmitter<number>();
 @Output() notifyUnlocked: EventEmitter<Pallier> = new EventEmitter<Pallier>();
 @Output() notifyBuying: EventEmitter<number> = new EventEmitter<number>();
 
@@ -134,8 +128,8 @@ calcCost (qty : number) {
   return totalCost;
 }
 
-  onBuy(){
-    let qty : number;
+  onBuy( qty : number){
+    ;
     if(this._qtmulti === 'X1'){
       qty=1;
     }else if(this._qtmulti === 'X10'){

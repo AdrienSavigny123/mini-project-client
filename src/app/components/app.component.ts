@@ -4,6 +4,7 @@ import { World,Product,Pallier} from '../resources/world';
 import { ProductComponent } from './product/product.component';
 import { analyzeAndValidateNgModules } from '@angular/compiler';
 import { ToastrService } from 'ngx-toastr';
+import { delay } from '../utils/delay.function';
 
 @Component({
   selector: 'app-root',
@@ -48,7 +49,7 @@ onUsernameChanged(): void {
 createUsername(): void {
   this.username = localStorage.getItem("username");
   if (this.username == '') {
-    this.username = 'Jedi' + Math.floor(Math.random() * 10000);
+    this.username = 'Chef' + Math.floor(Math.random() * 10000);
     localStorage.setItem("username", this.username);
   }
   this.service.setUser(this.username);
@@ -76,11 +77,17 @@ buyRate() {
   }
 }
 
-onBuyDone(cost: number): void {
-  if (this.world.money >= cost) {
-    this.world.money -= cost;
+async onBuyDone(n : number){
+  if(this.world.money >= n){
+  this.world.money = this.world.money - n;
+  } else {
+    this.world.money = this.world.money;
   }
-  this.newManager();
+  await delay(0);
+  this.managerDisponibility();
+  this.upgradeDisponibility();
+  this.bonusAllunlock();
+ 
 }
 
 managerDisponibility() : void {
@@ -157,18 +164,56 @@ achatUpgrade (u : Pallier){
     this.upgradeDisponibility();
   }
 }
-  newManager() {
-    for (const manager of this.world.managers.pallier) {
-      if (this.world.money >= manager.seuil && manager.unlocked === false) {
-        document.getElementById('btnManagers').innerHTML = '<span class="badge">New</span> Managers';
-        break;
-      } else {
-        document.getElementById('btnManagers').innerHTML = 'Managers';
+
+achatAngelUpgrade(p: Pallier) {
+  if (this.world.activeangels > p.seuil) {
+    this.world.activeangels = this.world.activeangels - 1;
+    this.world.angelupgrades.pallier[this.world.angelupgrades.pallier.indexOf(p)].unlocked = true;
+    if (p.typeratio == "ange") {
+      this.world.money = this.world.money * p.ratio + this.world.money;
+      this.world.score = this.world.score * p.ratio + this.world.score;
+      this.toastr.success("Achat d'un upgrade de " + p.typeratio + " pour tous les produits", "Upgrade Angels")
+    }
+    //au cas ou c'est pas un upgrade de type ange
+    else {
+      //au cas ou c'est un upgrade global
+      if (p.idcible = 0) {
+        this.productsComponent.forEach(prod => prod.calcUpgrade(p));
+        this.toastr.success("Achat d'un upgrade de " + p.typeratio + " pour tous les produits", "Upgrade Angels");
+      }
+      //au cas ou c'est ciblé pour un produit
+      else {
+        this.productsComponent.forEach(prod => {
+          if (p.idcible == prod.product.id) {
+            prod.calcUpgrade(p);
+            this.toastr.success("Achat d'un upgrade de " + p.typeratio + " pour " + prod.product.name, "Upgrade Angels")
+          }
+        })
+
       }
     }
   }
+  this.managerDisponibility();
+  this.upgradeDisponibility();
+}
 
-
+bonusAllunlock() {
+  this.world.allunlocks.pallier.forEach(palier => {
+    let minQuantite : boolean = true;
+    this.productsComponent.forEach(p => {
+      console.log(p.product.quantite);
+      if(p.product.quantite < palier.seuil){
+        minQuantite=false;
+      }
+    });
+    console.log(minQuantite);
+    if(minQuantite){
+      this.world.allunlocks.pallier[this.world.allunlocks.pallier.indexOf(palier)].unlocked = true;
+      this.productsComponent.forEach(prod => prod.calcUpgrade(palier));
+      this.toastr.success("Bonus de " + palier.typeratio + " effectué sur tous les produits");
+    }
+  });
+}
 
   productUnlockDone  (p : Pallier){
     this.productsComponent.forEach(prod => {

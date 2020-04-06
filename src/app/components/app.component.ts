@@ -23,27 +23,44 @@ qtmulti : string = "X1";
 managerDispo : boolean;
 upgradeDispo : boolean;
 angelDispo : boolean;
+interval;
 
 constructor(private service: RestserviceService, private toastr : ToastrService){
   this.server = service.getServer();
-  service.getWorld().then(
-    world => {
-      this.world=world;
-      console.log("world:",world);
-      }).catch(error => {console.log("error:",error)});
+  this.createUsername();
+  service.getWorld().then(world => {
+    this.world = world;
+  });
 
-      this.createUsername();
-         
+}
+
+ngOnInit() : void {
+  this.interval = setInterval(() => { 
+    this.service.saveWorld(this.world);
+    this.managerDisponibility();
+    this.upgradeDisponibility();
+    this.bonusAllunlock();
+  }, 1000)
+
   
 }
 
-ngOnInit(){
-
-}
 
 onUsernameChanged(): void {
+  console.log(this.username);
+  clearInterval(this.interval);
   localStorage.setItem("username", this.username);
   this.service.setUser(this.username);
+  this.service.getWorld().then(
+    world => { this.world = world; 
+      console.log("world:",world);
+    }).catch(error => {console.log("error:",error)});
+  this.interval = setInterval(() => { 
+    this.service.saveWorld(this.world);
+    this.managerDisponibility();
+    this.upgradeDisponibility();
+    this.bonusAllunlock();
+  }, 1000)
 }
 
 createUsername(): void {
@@ -56,12 +73,13 @@ createUsername(): void {
 }
 
 
-onProductionDone(p : Product){
-  this.world.money = this.world.money + p.revenu*p.quantite;
-  this.world.score = this.world.score + p.revenu*p.quantite;
-  console.log('Je ne fais que passer')
+onProductionDone(p: Product) {
+  this.world.money = this.world.money + p.quantite * p.revenu * (1 + (this.world.activeangels * this.world.angelbonus / 100));
+  this.world.score = this.world.score + p.quantite * p.revenu * (1 + (this.world.activeangels * this.world.angelbonus / 100));
+  this.world.totalangels = Math.round(this.world.totalangels + (150 * Math.sqrt(this.world.score / Math.pow(10, 15))));
   this.managerDisponibility();
   this.upgradeDisponibility();
+  this.service.putProduit(p);
 }
 
 buyRate() {
@@ -140,7 +158,8 @@ achatManager(m : Pallier){
       }
     });
     this.managerDisponibility();
-    this.toastr.success("Achat du Manager " + m.name + " effectué");  }
+    this.toastr.success("Achat du Manager " + m.name + " effectué"); 
+    this.service.putManager(m); }
 
 }
 
@@ -162,8 +181,11 @@ achatUpgrade (u : Pallier){
       })
     }
     this.upgradeDisponibility();
+    this.service.putUpgrade(u);
   }
 }
+
+
 
 achatAngelUpgrade(p: Pallier) {
   if (this.world.activeangels > p.seuil) {
@@ -193,8 +215,6 @@ achatAngelUpgrade(p: Pallier) {
       }
     }
   }
-  this.managerDisponibility();
-  this.upgradeDisponibility();
 }
 
 bonusAllunlock() {
@@ -211,6 +231,7 @@ bonusAllunlock() {
       this.world.allunlocks.pallier[this.world.allunlocks.pallier.indexOf(palier)].unlocked = true;
       this.productsComponent.forEach(prod => prod.calcUpgrade(palier));
       this.toastr.success("Bonus de " + palier.typeratio + " effectué sur tous les produits");
+      this.service.putUpgrade(palier);
     }
   });
 }
@@ -222,4 +243,10 @@ bonusAllunlock() {
         }
     });
   }
+
+    //recupération des angels gagnés
+    claimAngel(): void {
+      this.service.deleteWorld();
+    }
+  
 }

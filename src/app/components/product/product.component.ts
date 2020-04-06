@@ -1,9 +1,12 @@
-import { Component, OnInit, Input, ViewChild, EventEmitter, Output,Host, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, EventEmitter, Output,Host, OnChanges, SimpleChanges, ElementRef } from '@angular/core';
 import { World,Product, Pallier } from 'src/app/resources/world';
 import { AppComponent } from '../app.component';
+import { NotificationService } from 'src/app/services/notification.service';
+
 
 declare var require;
 const ProgressBar = require("progressbar.js");
+
 @Component({
   selector: 'app-product',
   templateUrl: './product.component.html',
@@ -11,21 +14,16 @@ const ProgressBar = require("progressbar.js");
 })
 
 export class ProductComponent implements OnInit {
-  @ViewChild('bar') progressBarItem: { nativeElement: any; };
-  progressbar: any;
-  product: Product;
+  @ViewChild('bar') progressBarItem: ElementRef; 
   lastupdate: number;
-  rateProd: string;
-  _money: number;
+  progressbar: any;
   isRun: boolean;
-
-@Output()
-notifyProduction: EventEmitter<Product> = new EventEmitter<Product>();
-@Output()
+  product: Product;
+  _money: number;
+  
 @Output() notifyUnlocked: EventEmitter<Pallier> = new EventEmitter<Pallier>();
-@Output() notifyBuying: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor() { }
+
 
 
 
@@ -33,7 +31,7 @@ notifyProduction: EventEmitter<Product> = new EventEmitter<Product>();
 @Input()
   set prod(value: Product) {
     this.product = value;
-    if (this.product && this.product.timeleft > 0){
+    if (this.product.managerUnlocked && this.product.timeleft > 0){
       this.lastupdate = Date.now();
       let progress = (this.product.vitesse - this.product.timeleft) / this.product.vitesse;
       this.progressbar.set(progress);
@@ -57,6 +55,11 @@ notifyProduction: EventEmitter<Product> = new EventEmitter<Product>();
       this._qtmulti = value;
     }
   }
+  @Output() notifyProduction: EventEmitter<Product> = new EventEmitter<Product>();
+  @Output() notifyBuying: EventEmitter<number> = new EventEmitter<number>();
+ 
+  
+constructor(private notifyService: NotificationService) { }
 
   ngOnInit(): void {
     setInterval(() => { this.calcScore();}, 100);
@@ -79,10 +82,9 @@ notifyProduction: EventEmitter<Product> = new EventEmitter<Product>();
 
   startFabrication() {
     if (this.product.quantite >= 1 && !this.isRun) {
-    console.log('Fabrication commencée')
-    this.product.timeleft = this.product.vitesse;
+    console.log('Fabrication commencée')  
+    this.progressbar.animate(1, { duration: (this.product.vitesse - this.product.timeleft) / this.product.vitesse });
     this.lastupdate = Date.now();
-    this.progressbar.animate(1, { duration: this.product.vitesse });
     this.isRun = true;
     }
   }
@@ -91,15 +93,15 @@ notifyProduction: EventEmitter<Product> = new EventEmitter<Product>();
     if (this.isRun) {
       if (this.product.timeleft > 0) {
         this.product.timeleft = this.product.timeleft - (Date.now() - this.lastupdate);
-        this.lastupdate = Date.now();
-        console.log('coucou');
-      } else {
+      } 
+      else {
         this.isRun = false;
         this.lastupdate = 0;
         this.product.timeleft = 0;
         this.progressbar.set(0);
-        this.notifyProduction.emit(this.product);
+        
       }
+      this.notifyProduction.emit(this.product);
     }
     if (this.product.managerUnlocked) {
       this.startFabrication();
@@ -128,25 +130,25 @@ calcCost (qty : number) {
   return totalCost;
 }
 
-  onBuy( qty : number){
-    ;
-    if(this._qtmulti === 'X1'){
-      qty=1;
-    }else if(this._qtmulti === 'X10'){
-        qty=10;
-    }else if(this._qtmulti == 'X100'){
-        qty=100
-    }else{
-      qty=this.calcMaxCanBuy();
-    }
-    var coutAchat = this.calcCost(qty);
-    console.log(coutAchat);
-    if(this._money >= coutAchat){
-      this.notifyBuying.emit(coutAchat);
-      this.product.quantite = this.product.quantite + qty;
-    }
-    this.productsUnlocks();
+onBuy(){
+  let qty : number;
+  if(this._qtmulti === 'X1'){
+    qty=1;
+  }else if(this._qtmulti === 'X10'){
+      qty=10;
+  }else if(this._qtmulti == 'X100'){
+      qty=100
+  }else{
+    qty=this.calcMaxCanBuy();
   }
+  var coutAchat = this.calcCost(qty);
+  console.log(coutAchat);
+  if(this._money >= coutAchat){
+    this.notifyBuying.emit(coutAchat);
+    this.product.quantite = this.product.quantite + qty;
+  }
+  this.productsUnlocks();
+}
 
   calcUpgrade(pallier: Pallier) {
       switch (pallier.typeratio) {

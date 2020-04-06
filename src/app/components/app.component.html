@@ -7,6 +7,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-2">
+          <span class="worldname" id='worldname'>{{world.name}}</span>
           <img src='http://localhost:8080/piment.jpg' class="img-responsive"
                width="100%">
         </div>
@@ -15,7 +16,10 @@
         <div class="col-md-8" style="text-align:center">
           <h3 class="mt-4 display-4 text-white">Welcome to {{ title }} !</h3>
           <form>
-                <input type="Username" class="form-control" id="username" placeholder="Username">
+                
+                <span class="row">Your ID : </span>
+          <input type="text" style="width: 160px; padding-left: 12px;" class="row border border-info rounded"
+            [(ngModel)]="username" (change)="onUsernameChanged()" />
             </form>
         </div>
 
@@ -34,11 +38,15 @@
         </div> -->
            <div class="row">
             <div class="col-md-2">
-              <p><button type="button" class="btn btn-primary btn-lg" data-toggle="modal" (click)="managersModal.show()"> <span class="badge">New</span>Managers</button></p><br>
+              <p><button type="button" class="btn btn-primary btn-lg" data-toggle="modal" (click)="managersModal.show()"><span
+                *ngIf="managerDispo" class="badge text-warning">New</span>Managers</button></p><br>
               <p><button type="button" class="btn btn-primary btn-block" data-toggle="modal" (click)="unlockModal.show()">Unlocks</button></p><br>
-              <p><button type="button" class="btn btn-primary btn-block" data-toggle="modal" (click)="upgradesModal.show()">Cash Upgrades</button></p><br>
+              <p><button type="button" class="btn btn-primary btn-block" data-toggle="modal" (click)="upgradesModal.show()"><span
+                *ngIf="upgradeDispo" class="badge text-warning">New</span>Cash
+              Upgrades</button></p><br>
               <p><button type="button" class="btn btn-primary btn-block" data-toggle="modal" (click)="investorsModal.show()">Investors</button></p><br>
-              <p><button type="button" class="btn btn-primary btn-block" data-toggle="modal" (click)="angelupgradesModal.show()">Angel Upgrades</button></p><br>
+              <p><button type="button" class="btn btn-primary btn-block" data-toggle="modal" (click)="angelupgradesModal.show()"><span
+                *ngIf="angelDispo" class="badge text-warning">New</span>Angel Upgrades</button></p><br>
           </div>
             <div class="col-md-10">
               <p>
@@ -77,6 +85,32 @@
           <div class="app-modal-footer"> <button type="button" class="btn btn-default" (click)="managersModal.hide()">Close</button> </div>
       </app-modal>
 
+      <app-modal #angelupgradesModal>
+        <div class="app-modal-header">
+            <h4 class="modal-title text-center" style="font-size:x-large;">May The angels be with you !</h4>
+        </div>
+        <div class="app-modal-body" style="padding-right: 10px;">
+            <div *ngFor="let angelupgrade of world.angelupgrades.pallier">
+                <div *ngIf="!angelupgrade.unlocked" class="row rounded notif border-bottom">
+                    <div class="col-md-5">
+                        <img class="img-responsive" [src]="'http://localhost:8080/'+angelupgrade.logo" style="cursor:pointer" />
+                    </div>
+                    <div class="col-md-7">
+                        <div class="row">
+                            <button class="btn btn-info pull-right" style="height: 100px; width: 100px;" (click)="achatAngelUpgrade(angelupgrade)" [disabled]="world.money < angelupgrade.seuil">Buy!</button>
+                            <span class="txt2 row text-center font-weight-bold" style="font-size:large; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;"> {{angelupgrade.name}} <br>
+                                <span style="font-family: 'ROG Fonts'; font-size: small; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">{{angelupgrade.typeratio}}</span>
+                                
+                            <span style="font-family: 'ROG Fonts'; font-size: small; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">Price : {{angelupgrade.seuil}} euros</span></span>
+                        </div>
+    
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="app-modal-footer"> <button type="button" class="btn btn-default" (click)="angelupgradesModal.hide()">Close</button> </div>
+    </app-modal>
+
       <app-modal #unlockModal>
         <div class="app-modal-header">
             <h4 class="modal-title text-center" style="font-size:x-large;">Some help to improve your space business!</h4>
@@ -92,35 +126,12 @@
                             <span class="txt2 row text-center font-weight-bold" style="font-size:large; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">
                                 {{unlock.name}} <br>
                                 <span style="font-family: 'ROG Fonts'; font-size: small; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">
-                                    To unlock : {{unlock.seuil}} unities</span>
+                                    To unlock : {{unlock.seuil}} euros</span>
                             </span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div *ngFor="let product of world.products.product">
-                <div *ngFor="let unlock of product.palliers.pallier">
-                    <div *ngIf="!unlock.unlocked" class="row rounded notif border-bottom">
-                        <div class="col-md-5">
-                            <img class="img-responsive" [src]="'http://localhost:8080/'+unlock.logo" style="cursor:pointer" />
-                        </div>
-                        <div class="col-md-7">
-                            <div class="row">
-                                <span class="txt2 row text-center font-weight-bold" style="font-size:large; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">
-                                    {{unlock.name}} <br>
-                                    <span style="font-family: 'ROG Fonts'; font-size: small; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">
-                                    To unlock : {{unlock.seuil}} unities</span>
-                                </span>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-
-
 
         </div>
         <div class="app-modal-footer"> <button type="button" class="btn btn-default" (click)="unlockModal.hide()">Close</button> </div>
@@ -141,7 +152,7 @@
                       <div class="row">
                           <button class="btn btn-info pull-right" style="height: 100px; width: 100px;" (click)="achatUpgrade(upgrade)" [disabled]="world.money < upgrade.seuil">Buy!</button>
                           <span class="txt2 row text-center font-weight-bold" style="font-size:x-large; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">{{upgrade.name}}
-                              <br><span style="font-family: 'ROG Fonts'; font-size: small; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">Price : {{upgrade.seuil}} CR</span>
+                              <br><span style="font-family: 'ROG Fonts'; font-size: small; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">Price : {{upgrade.seuil}} euros</span>
                           </span>
                       </div>
 
@@ -158,14 +169,14 @@
     </div>
     <div class="app-modal-body">
         <div class="row border rounded text-center">
-            <span class="col-md-12">Your Total Ewoks</span>
+            <span class="col-md-12">Your Total angels</span>
             <span style="font-size: 30px;" class="col-md-12">{{world.totalangels}}</span>
         </div>
         <div class="row">
             <div style="height: 200px; padding-top: 40px; padding-left: 30px;" class="col-md-6 bg-dark">
                 <div class="row">
                     <span style="font-size: 35px;" class="col-md-12 text-center">{{world.angelbonus}}%</span>
-                    <span style="margin-left: 20px;" class="text-center">Profit Bonus Per Ewok</span>
+                    <span style="margin-left: 20px;" class="text-center">Profit Bonus Per angel</span>
                 </div>
             </div>
             <div style="height: 200px; padding-top: 4px; padding-left: 15px;" class="col-md-6 bg-dark">
@@ -173,7 +184,7 @@
                     <span style="font-size: 35px;" class="col-md-12 text-center">{{world.activeangels}}</span>
                     <span style="margin-left: 20px;">Ewoks Claimed with Restart</span>
                     <button class="col-md-9 text-center btn-block btn-default">Claim</button>
-                    <!--<span class="col-md-12 text-center">Restart Your business</span>-->
+                    <span class="col-md-12 text-center">Restart Your business</span>
                 </div>
             </div>
         </div>
@@ -183,29 +194,7 @@
     </div>
 </app-modal>
 
-  <app-modal #angelupgradesModal>
-    <div class="app-modal-header">
-        <h4 class="modal-title text-center" style="font-size:x-large;">May The Ewoks be with you !</h4>
-    </div>
-    <div class="app-modal-body" style="padding-right: 10px;">
-        <div *ngFor="let angelupgrade of world.angelupgrades.pallier">
-            <div *ngIf="!angelupgrade.unlocked" class="row rounded notif border-bottom">
-                <div class="col-md-5">
-                    <img class="img-responsive" [src]="'http://localhost:8080/'+angelupgrade.logo" style="cursor:pointer" />
-                </div>
-                <div class="col-md-7">
-                    <div class="row">
-                        <button class="btn btn-info pull-right" style="height: 100px; width: 100px;" (click)="achatAngelUpgrade(angelupgrade)" [disabled]="world.money < angelupgrade.seuil">Buy!</button>
-                        <span class="txt2 row text-center font-weight-bold" style="font-size:large; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">
-                            {{angelupgrade.name}} <br><span style="font-family: 'ROG Fonts'; font-size: small; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">Price : {{angelupgrade.seuil}} ewoks</span></span>
-                    </div>
 
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="app-modal-footer"> <button type="button" class="btn btn-default" (click)="angelupgradesModal.hide()">Close</button> </div>
-</app-modal>
           </div>  
        
   

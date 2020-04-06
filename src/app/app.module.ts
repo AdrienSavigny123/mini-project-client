@@ -10,6 +10,7 @@ import { BigvaluePipe } from './bigvalue.pipe';
 import { ModalComponent } from './components/modal/modal.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NotificationService } from './services/notification.service';
 
 
 
@@ -29,7 +30,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
   ],
-  providers: [RestserviceService],
+  providers: [RestserviceService,NotificationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

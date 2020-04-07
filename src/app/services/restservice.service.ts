@@ -19,7 +19,7 @@ export class RestserviceService {
   }
 
 public setUser(user:string) {
-  return this.user;
+   this.user=user;
 }
 
 public getServer() : string {
@@ -30,6 +30,7 @@ private handleError(error: any): Promise<any> {
   console.error('An error occurred', error); 
   return Promise.reject(error.message|| error);
 }
+
 
 getWorld(): Promise<World> {
   console.log("username:"+this.getUser())
@@ -79,14 +80,20 @@ public putUpgrade(upgrade: Pallier): Promise<Response> {
    .catch(this.handleError);
 }
 
-public saveWorld(world: World): Promise<Response> {
-  return this.http
-    .put(this.server + "generic/world", world, {
-      headers: { "X-user": this.getUser() }
-    })
-    .toPromise()
-    .then(response => response)
-    .catch(this.handleError);
+public saveWorld (world : World) {
+  this.http
+  .put(this.server + "generic/world", world, {
+    headers: {"X-user": localStorage.getItem("username")}
+  })
+  .subscribe(
+    () => {
+      console.log('Enregistrement effectué');
+    },
+    (error)=>{
+      console.log('Erreur : ' + error);
+    }
+    );
+  
 }
 
 public deleteWorld(): Promise<Response> {

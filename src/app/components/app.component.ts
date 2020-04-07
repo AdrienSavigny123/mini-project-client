@@ -47,20 +47,8 @@ ngOnInit() : void {
 
 
 onUsernameChanged(): void {
-  console.log(this.username);
-  clearInterval(this.interval);
   localStorage.setItem("username", this.username);
   this.service.setUser(this.username);
-  this.service.getWorld().then(
-    world => { this.world = world; 
-      console.log("world:",world);
-    }).catch(error => {console.log("error:",error)});
-  this.interval = setInterval(() => { 
-    this.service.saveWorld(this.world);
-    this.managerDisponibility();
-    this.upgradeDisponibility();
-    this.bonusAllunlock();
-  }, 1000)
 }
 
 createUsername(): void {

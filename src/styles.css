@@ -9,3 +9,17 @@
     height: 8px;
   }
 
+
+body{
+    color: #8e2812;
+    background-image: url('http://localhost:8080/ile.jpg');
+	background-repeat: no-repeat;
+	background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+}
+
+.round {
+    width: 100px;
+    height: 100px;
+}

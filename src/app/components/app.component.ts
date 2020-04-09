@@ -26,12 +26,13 @@ angelDispo : boolean;
 interval;
 
 constructor(private service: RestserviceService, private toastr : ToastrService){
-  this.server = service.getServer();
-  this.createUsername();
-  service.getWorld().then(world => {
-    this.world = world;
-  });
+  this.server = service.getServer(); 
+  service.getWorld().then(
+    world => { this.world = world; 
+      console.log("world:",world);
+    }).catch(error => {console.log("error:",error)});
 
+    this.createUsername();
 }
 
 ngOnInit() : void {
@@ -40,6 +41,7 @@ ngOnInit() : void {
     this.managerDisponibility();
     this.upgradeDisponibility();
     this.bonusAllunlock();
+    this.angelQty();
   }, 1000)
 
   
@@ -47,8 +49,20 @@ ngOnInit() : void {
 
 
 onUsernameChanged(): void {
+  console.log(this.username);
+  clearInterval(this.interval);
   localStorage.setItem("username", this.username);
   this.service.setUser(this.username);
+  this.service.getWorld().then(
+    world => { this.world = world; 
+      console.log("world:",world);
+    }).catch(error => {console.log("error:",error)});
+  this.interval = setInterval(() => { 
+    this.service.saveWorld(this.world);
+    this.managerDisponibility();
+    this.upgradeDisponibility();
+    this.bonusAllunlock();
+  }, 1000)
 }
 
 createUsername(): void {
@@ -61,13 +75,13 @@ createUsername(): void {
 }
 
 
-onProductionDone(p: Product) {
-  this.world.money = this.world.money + p.quantite * p.revenu * (1 + (this.world.activeangels * this.world.angelbonus / 100));
-  this.world.score = this.world.score + p.quantite * p.revenu * (1 + (this.world.activeangels * this.world.angelbonus / 100));
-  this.world.totalangels = Math.round(this.world.totalangels + (150 * Math.sqrt(this.world.score / Math.pow(10, 15))));
+onProductionDone(p : Product){
+  this.world.money = this.world.money + p.revenu*p.quantite*(this.world.angelbonus**this.world.activeangels);
+  this.world.score = this.world.score + p.revenu*p.quantite*(this.world.angelbonus**this.world.activeangels);
   this.managerDisponibility();
   this.upgradeDisponibility();
   this.service.putProduit(p);
+
 }
 
 buyRate() {

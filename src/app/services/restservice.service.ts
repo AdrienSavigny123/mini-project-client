@@ -47,10 +47,8 @@ private setHeaders(user: string): HttpHeaders {
   return headers;
 };
 
-
-
-
 public putManager(manager: Pallier): Promise<Response> {
+  // console.log(upgrade);
    return this.http
      .put(this.server + "generic/manager", manager, {
        headers: { "X-user": this.getUser() }
@@ -60,9 +58,22 @@ public putManager(manager: Pallier): Promise<Response> {
      .catch(this.handleError);
  }
 
- public putProduit(product: Product): Promise<Response> {
+
+public putProduit(product: Product): Promise<Response> {
+   //console.log(product);
+   return this.http
+     .put(this.server + "generic/product", product, {
+       headers: { "X-user": this.getUser() }
+     })
+     .toPromise()
+     .then(response => response)
+     .catch(this.handleError);
+ }
+
+public putUpgrade(upgrade: Pallier): Promise<Response> {
+ // console.log(upgrade);
   return this.http
-    .put(this.server + "generic/product", product, {
+    .put(this.server + "generic/upgrade", upgrade, {
       headers: { "X-user": this.getUser() }
     })
     .toPromise()
@@ -70,41 +81,28 @@ public putManager(manager: Pallier): Promise<Response> {
     .catch(this.handleError);
 }
 
-public putUpgrade(upgrade: Pallier): Promise<Response> {
- return this.http
-   .put(this.server + "generic/upgrade", upgrade, {
-     headers: { "X-user": this.getUser() }
-   })
-   .toPromise()
-   .then(response => response)
-   .catch(this.handleError);
-}
-
-public saveWorld (world : World) {
-  this.http
-  .put(this.server + "generic/world", world, {
-    headers: {"X-user": localStorage.getItem("username")}
-  })
-  .subscribe(
-    () => {
-      console.log('Enregistrement effectué');
-    },
-    (error)=>{
-      console.log('Erreur : ' + error);
-    }
-    );
-  
-}
+public saveWorld(world: World): Promise<Response> {
+  // console.log(world);
+   return this.http
+     .put(this.server + "generic/world", world, {
+       headers: { "X-user": this.getUser() }
+     })
+     .toPromise()
+     .then(response => response)
+     .catch(this.handleError);
+ }
 
 public deleteWorld(): Promise<Response> {
- return this.http
-   .delete(this.server + "generic/world", {
-     headers: this.setHeaders(this.getUser())
-   })
-   .toPromise().then(response => response)
-   .catch(this.handleError);
+  return this.http
+    .delete(this.server + "generic/world", {
+      headers: this.setHeaders(this.getUser())
+    })
+    .toPromise().then(response => response)
+    .catch(this.handleError);
 }
 
 }
+
+
 
 

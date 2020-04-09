@@ -41,7 +41,6 @@ ngOnInit() : void {
     this.managerDisponibility();
     this.upgradeDisponibility();
     this.bonusAllunlock();
-    this.angelQty();
   }, 1000)
 
   

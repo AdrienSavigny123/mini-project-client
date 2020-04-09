@@ -82,8 +82,19 @@ buyRate() {
   }
 }
 
-async onBuyDone(m : number){
-  this.world.money = this.world.money - m;
+
+
+async onBuyDone(cost: number) {
+  if (this.world.money >= cost) {
+    this.world.money -= cost;
+    console.log('hi' + cost);
+  } else {
+    this.world.money = this.world.money;
+  }
+  console.log(this.world.money);
+  await delay(0);
+  this.managerDisponibility();
+  this.upgradeDisponibility();
 }
 
 managerDisponibility() : void {
@@ -118,6 +129,8 @@ angelUpgradesDisponibility() {
     }
   })
 }
+
+
 
 
 

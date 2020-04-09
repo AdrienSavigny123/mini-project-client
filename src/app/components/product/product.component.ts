@@ -123,13 +123,18 @@ calcScore() {
 
 calcCost (qty : number) {
   let totalCost = 0;
+  console.log("quantite"+ this.product.quantite)
+  console.log("croissance"+ this.product.croissance)
+  console.log("cout"+ this.product.cout)
   let costForOne = this.product.cout*(this.product.croissance**this.product.quantite);
+  console.log("couttotal"+ costForOne)
   for(let i=0; i<qty; i++){
     totalCost += costForOne;
     costForOne = costForOne*this.product.croissance;
   }
   return totalCost;
 }
+
 
 onBuy(){
   let qty : number;
@@ -152,6 +157,15 @@ onBuy(){
   this.service.putProduit(this.product);
 }
 
+quantiteAchetable(){
+  let qty = 0;
+  if (this._qtmulti === "X1") { qty = 1 }
+  else if (this._qtmulti === "X10") { qty = 10 }
+  else if (this._qtmulti === "X100") { qty = 100 }
+  else if (this._qtmulti === "Max") { qty = this.calcMaxCanBuy() }
+
+  return qty;
+}
   calcUpgrade(pallier: Pallier) {
       switch (pallier.typeratio) {
       case 'VITESSE':

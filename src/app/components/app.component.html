@@ -166,7 +166,7 @@
 
     <app-modal #upgradesModal>
       <div class="app-modal-header">
-          <h4 class="modal-title text-center" style="font-size:x-large;">Upgrade your ships!</h4>
+          <h4 class="modal-title text-center" style="font-size:x-large;">Upgrade your game!</h4>
       </div>
       <div class="app-modal-body" style="padding-right: 10px;">
           <div *ngFor="let upgrade of world.upgrades.pallier">
@@ -207,9 +207,10 @@
             </div>
             <div style="height: 200px; padding-top: 4px; padding-left: 15px;" class="col-md-6 bg-dark">
                 <div class="row text-center">
-                    <span style="margin-left: 20px; text-align: center;">Ang Claimed with Restart</span>
-                    <span style="font-size: 35px;" class="col-md-12 text-center" [innerHTML]="angelsToClaim | bigvalue">{{angelsToClaim}}</span>
-                    <button class="col-md-9 text-center btn-block btn-default" (click)="claimAngel()">Claim and restart your business!</button>
+                    <span style="font-size: 35px;" class="col-md-12 text-center">{{world.activeangels}}</span>
+                    <span style="margin-left: 20px;">Angels Claimed with Restart</span>
+                    <button class="col-md-9 btn text-white border rounded border-info validInv" (click)="claimAngel()">Claim</button>
+                    <span class="col-md-12 text-center">Restart Your businesses</span>
                 </div>
             </div>
         </div>

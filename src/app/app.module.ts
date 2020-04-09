@@ -30,7 +30,7 @@ import { NotificationService } from './services/notification.service';
 
 
   ],
-  providers: [RestserviceService,NotificationService],
+  providers: [RestserviceService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

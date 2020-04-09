@@ -81,16 +81,7 @@ public putUpgrade(upgrade: Pallier): Promise<Response> {
     .catch(this.handleError);
 }
 
-public saveWorld(world: World): Promise<Response> {
-  // console.log(world);
-   return this.http
-     .put(this.server + "generic/world", world, {
-       headers: { "X-user": this.getUser() }
-     })
-     .toPromise()
-     .then(response => response)
-     .catch(this.handleError);
- }
+
 
 public deleteWorld(): Promise<Response> {
   return this.http

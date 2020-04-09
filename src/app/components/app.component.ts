@@ -35,33 +35,19 @@ constructor(private service: RestserviceService, private toastr : ToastrService)
     this.createUsername();
 }
 
-ngOnInit() : void {
-  this.interval = setInterval(() => { 
-    this.service.saveWorld(this.world);
+ngOnInit(): void {
+  //sauvegarder le monde 
+  setInterval(() => {
+    this.bonusAllunlock()
     this.managerDisponibility();
     this.upgradeDisponibility();
-    this.bonusAllunlock();
-  }, 1000)
-
-  
+  }, 1000);
 }
 
 
 onUsernameChanged(): void {
-  console.log(this.username);
-  clearInterval(this.interval);
   localStorage.setItem("username", this.username);
   this.service.setUser(this.username);
-  this.service.getWorld().then(
-    world => { this.world = world; 
-      console.log("world:",world);
-    }).catch(error => {console.log("error:",error)});
-  this.interval = setInterval(() => { 
-    this.service.saveWorld(this.world);
-    this.managerDisponibility();
-    this.upgradeDisponibility();
-    this.bonusAllunlock();
-  }, 1000)
 }
 
 createUsername(): void {
@@ -74,13 +60,13 @@ createUsername(): void {
 }
 
 
-onProductionDone(p : Product){
-  this.world.money = this.world.money + p.revenu*p.quantite*(this.world.angelbonus**this.world.activeangels);
-  this.world.score = this.world.score + p.revenu*p.quantite*(this.world.angelbonus**this.world.activeangels);
+onProductionDone(p: Product) {
+  this.world.money = this.world.money + p.quantite * p.revenu * (1 + (this.world.activeangels * this.world.angelbonus / 100));
+  this.world.score = this.world.score + p.quantite * p.revenu * (1 + (this.world.activeangels * this.world.angelbonus / 100));
+  this.world.totalangels = Math.round(this.world.totalangels + (150 * Math.sqrt(this.world.score / Math.pow(10, 15))));
   this.managerDisponibility();
   this.upgradeDisponibility();
   this.service.putProduit(p);
-
 }
 
 buyRate() {
@@ -96,17 +82,8 @@ buyRate() {
   }
 }
 
-async onBuyDone(n : number){
-  if(this.world.money >= n){
-  this.world.money = this.world.money - n;
-  } else {
-    this.world.money = this.world.money;
-  }
-  await delay(0);
-  this.managerDisponibility();
-  this.upgradeDisponibility();
-  this.bonusAllunlock();
- 
+async onBuyDone(m : number){
+  this.world.money = this.world.money - m;
 }
 
 managerDisponibility() : void {

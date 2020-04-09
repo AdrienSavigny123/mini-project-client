@@ -62,9 +62,9 @@ set prod(value: Product) {
 
 
   ngOnInit(): void {
-    setInterval(() => { this.calcScore();}, 100);
-    this.productsUnlocks();
-    
+    setInterval(() => {
+      this.calcScore();
+    }, 100);
   }
 
   ngAfterViewInit() {
@@ -95,19 +95,18 @@ calcScore() {
   if (this.isRun) {
     if (this.product.timeleft > 0) {
       this.product.timeleft = this.product.timeleft - (Date.now() - this.lastupdate);
-      this.lastupdate = Date.now();
-      console.log('coucou');
-    } else {
-      this.isRun = false;
-      this.lastupdate = 0;
-      this.product.timeleft = 0;
-      this.progressbar.set(0);
-      this.notifyProduction.emit(this.product);
     }
+    else {
+      this.product.timeleft = 0;
+      this.lastupdate = 0;
+      this.isRun = false;
+      this.progressbar.set(0);
+    }
+    this.notifyProduction.emit(this.product);
   }
   if (this.product.managerUnlocked) {
     this.startFabrication();
-}
+  }
 }
 
   calcMaxCanBuy() {

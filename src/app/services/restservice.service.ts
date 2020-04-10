@@ -33,13 +33,18 @@ private handleError(error: any): Promise<any> {
 
 
 getWorld(): Promise<World> {
-  console.log("username:"+this.getUser())
-  let headers = this.setHeaders(this.getUser())
-  return this.http.get(this.server + "generic/world", {
-    headers: headers
-  })
-    .toPromise().then(response => response)
-    .catch(this.handleError);
+  console.log("usertest : " + this.getUser());
+
+  console.log(this.server + "generic/world");
+  
+  //return this.http.get(this.server+ "adventureisis/generic/world").toPromise().catch(this.handleError);
+   return this.http.get(this.server + "generic/world", {
+    headers: { "X-user": this.getUser() }
+   })
+     .toPromise().then(response => response)
+     .catch(this.handleError);
+
+
 };
 
 private setHeaders(user: string): HttpHeaders {
@@ -92,6 +97,18 @@ public deleteWorld(): Promise<Response> {
     .catch(this.handleError);
 }
 
+
+
+public putAngel(angel: Pallier): Promise<Response> {
+  // console.log(angel);
+   return this.http
+     .put(this.server + "generic/angelupgrade", angel, {
+       headers: { "X-user": this.getUser() }
+     })
+     .toPromise()
+     .then(response => response)
+     .catch(this.handleError);
+ }
 }
 
 

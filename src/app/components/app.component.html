@@ -28,6 +28,8 @@
         <div class="row">
           <div class="col-md-2">
             <h4 class="texthaut">Argent : </h4> <span [innerHTML]="world.money | bigvalue"></span>
+            <h4 class="texthaut">Ange : </h4><span id="angel" [innerHTML]="world.activeangels | bigvalue"></span>
+            <h4 class="texthaut"> Score :</h4><span [innerHTML]="world.score | bigvalue"></span>
             <p> <button type="button" class="button btn-warning btn-lg pull-right" (click)="buyRate()">Buy {{qtmulti}}</button> </p>
 
           </div>
@@ -100,11 +102,11 @@
                     </div>
                     <div class="col-md-7">
                         <div class="row">
-                            <button class="btn btn-info pull-right" style="height: 100px; width: 100px;" (click)="achatAngelUpgrade(angelupgrade)"
-                             [disabled]="world.activeangels < angelupgrade.seuil">Buy!</button>
+                            <button class="btn btn-info pull-right" style="height: 100px; width: 100px;" (click)="achatAnge(angelupgrade)"
+                             [disabled]="world.money < angelupgrade.seuil">Buy!</button>
                             <span class="txt2 row text-center font-weight-bold">
                                 {{angelupgrade.name}} <br>
-                                <span class="row text-center">Price : {{angelupgrade.seuil}} euros</span></span>
+                                <span class="row text-center">Price : {{angelupgrade.seuil}} </span></span>
                         </div>
 
                     </div>
@@ -191,34 +193,26 @@
 
   <app-modal #investorsModal>
     <div class="app-modal-header">
-        <h4 class="modal-title text-center" style="font-size:x-large;">Angel can help you!</h4>
+      <h4 class="modal-title">Angels</h4>
     </div>
     <div class="app-modal-body">
-        <div class="row border rounded text-center">
-            <span class="col-md-12">Your Total Angels</span>
-            <span style="font-size: 30px;" class="col-md-12">{{world.totalangels}}</span>
+      <div class="row">
+        <div class="col-md-4">
+          <span>Total Anges:&nbsp;</span><span [innerHTML]="world.totalangels | bigvalue"></span><br/>
+          <span>Bonus Per Angels:&nbsp;{{world.angelbonus}} %</span>      
         </div>
-        <div class="row">
-            <div style="height: 200px; padding-top: 40px; padding-left: 30px;" class="col-md-6 bg-dark">
-                <div class="row">
-                    <span style="font-size: 35px;" class="col-md-12 text-center">{{world.angelbonus}}%</span>
-                    <span style="margin-left: 20px;" class="text-center">Profit Bonus Per Angel</span>
-                </div>
-            </div>
-            <div style="height: 200px; padding-top: 4px; padding-left: 15px;" class="col-md-6 bg-dark">
-                <div class="row text-center">
-                    <span style="font-size: 35px;" class="col-md-12 text-center">{{world.activeangels}}</span>
-                    <span style="margin-left: 20px;">Angels Claimed with Restart</span>
-                    <button class="col-md-9 btn text-white border rounded border-info validInv" (click)="claimAngel()">Claim</button>
-                    <span class="col-md-12 text-center">Restart Your businesses</span>
-                </div>
-            </div>
+        <div class="col-md-4">
+          <span>Ange gagné au prochain restart : {{nvAnges-world.totalangels}}</span>
         </div>
+        <div class="col-md-4">
+          <button  class="btn btn-primary" (click)="claimAngel()">Claim and restart !</button>
+        </div>
+      </div>
     </div>
     <div class="app-modal-footer">
-        <button type="button" class="btn btn-default" (click)="investorsModal.hide()">Close</button>
+      <button type="button" class="btn btn-default" (click)="investorsModal.hide()">Close</button>
     </div>
-</app-modal>
+  </app-modal>
 
 
           </div>  
